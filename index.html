@@ -36,9 +36,14 @@
 
   /* ---------- Header ---------- */
   .header{
+    position:fixed;top:0;left:50%;transform:translateX(-50%);
+    width:100%;max-width:480px;z-index:5;
+    background:var(--primary);
     padding:calc(14px + env(safe-area-inset-top)) 18px 0;
+    height:calc(82px + env(safe-area-inset-top));
     color:#fff;
   }
+  .app{padding-top:calc(82px + env(safe-area-inset-top))}
   .top-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
   .icon-btn{
     width:40px;height:40px;border:none;background:transparent;color:#fff;
