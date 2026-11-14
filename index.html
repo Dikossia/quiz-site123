@@ -21,9 +21,10 @@
   }
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
   html,body{height:100%}
+  html{background:linear-gradient(var(--primary) 50%, #FFFFFF 50%)}
   body{
     font-family:'Poppins',system-ui,-apple-system,sans-serif;
-    background:var(--primary);
+    background:linear-gradient(var(--primary) 50%, #FFFFFF 50%);
     color:var(--text);
     overflow:hidden;
   }
@@ -104,8 +105,9 @@
   .footer{
     display:flex;justify-content:space-between;align-items:center;
     padding:14px 20px calc(16px + env(safe-area-inset-bottom));
-    background:var(--card);
-    box-shadow:0 -8px 18px rgba(243,245,248,.95);
+    background:#FFFFFF;
+    border-top:1px solid #E6E8EE;
+    box-shadow:0 -4px 16px rgba(20,22,28,.05);
   }
   .btn{
     font:600 15px 'Poppins',sans-serif;border-radius:14px;
@@ -114,7 +116,8 @@
   .btn-outline{
     background:transparent;border:1.5px solid #C7CBD3;color:#B4B9C2;
   }
-  .btn-outline:not(:disabled){border-color:var(--border);color:var(--text)}
+  .btn-outline:not(:disabled){border-color:var(--primary);color:var(--primary)}
+  .btn-outline:not(:disabled):active{background:#ECE9FF}
   .btn-outline:disabled{cursor:default}
   .btn-primary{background:var(--primary);color:#fff}
   .btn-primary:active{background:var(--primary-dark)}
