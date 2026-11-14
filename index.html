@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#3E22E6">
+<title>Тест</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --primary:#3E22E6;
+    --primary-dark:#3218C9;
+    --card:#F3F5F8;
+    --text:#14161C;
+    --muted:#9AA0AB;
+    --border:#1E2128;
+    --ok:#1DB954;
+    --bad:#E5484D;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{
+    font-family:'Poppins',system-ui,-apple-system,sans-serif;
+    background:var(--primary);
+    color:var(--text);
+    overflow:hidden;
+  }
+  .app{
+    max-width:480px;margin:0 auto;height:100dvh;
+    display:flex;flex-direction:column;background:var(--primary);
+    position:relative;
+  }
+
+  /* ---------- Header ---------- */
+  .header{
+    padding:calc(14px + env(safe-area-inset-top)) 18px 0;
+    color:#fff;
+  }
+  .top-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .icon-btn{
+    width:40px;height:40px;border:none;background:transparent;color:#fff;
+    display:grid;place-items:center;cursor:pointer;border-radius:12px;
+  }
+  .icon-btn:active{background:rgba(255,255,255,.12)}
+  .pill{
+    display:flex;align-items:center;gap:8px;
+    background:rgba(255,255,255,.16);
+    color:#fff;border:none;border-radius:999px;
+    padding:9px 18px;font:600 15px 'Poppins',sans-serif;cursor:pointer;
+  }
+  .pill:active{background:rgba(255,255,255,.24)}
+  .pill svg{opacity:.95}
+  .timer.warn{background:rgba(229,72,77,.85)}
+  .progress{
+    margin:20px 0 0;height:8px;border-radius:99px;
+    background:rgba(255,255,255,.18);overflow:hidden;
+  }
+  .progress > div{
+    height:100%;background:#fff;border-radius:99px;
+    width:0;transition:width .35s ease;min-width:8px;
+  }
+
+  /* ---------- Card ---------- */
+  .card{
+    flex:1;margin-top:26px;background:var(--card);
+    border-radius:28px 28px 0 0;
+    display:flex;flex-direction:column;min-height:0;
+  }
+  .content{
+    flex:1;overflow-y:auto;padding:4px 20px 20px;
+    -webkit-overflow-scrolling:touch;
+  }
+  .q-label{
+    font-size:13px;color:var(--muted);font-weight:500;
+    padding-top:4px;
+  }
+  .q-text{
+    font-size:21px;line-height:1.38;font-weight:700;
+    margin:10px 0 26px;letter-spacing:-.1px;
+  }
+  .options{display:flex;flex-direction:column;gap:16px}
+  .option{
+    display:flex;align-items:center;gap:16px;
+    width:100%;text-align:left;
+    background:transparent;border:1.5px solid var(--border);
+    border-radius:16px;padding:16px 18px;min-height:64px;
+    font:400 16px/1.45 'Poppins',sans-serif;color:var(--text);
+    cursor:pointer;transition:border-color .15s,background .15s;
+  }
+  .option .radio{
+    flex:0 0 22px;height:22px;border-radius:50%;
+    border:1.5px solid #6B7280;position:relative;transition:.15s;
+  }
+  .option.selected{border-color:var(--primary);background:#ECE9FF}
+  .option.selected .radio{border-color:var(--primary)}
+  .option.selected .radio::after{
+    content:"";position:absolute;inset:4px;border-radius:50%;background:var(--primary);
+  }
+  .option:active{transform:scale(.995)}
+
+  /* ---------- Footer ---------- */
+  .footer{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:14px 20px calc(16px + env(safe-area-inset-bottom));
+    background:var(--card);
+    box-shadow:0 -8px 18px rgba(243,245,248,.95);
+  }
+  .btn{
+    font:600 15px 'Poppins',sans-serif;border-radius:14px;
+    padding:14px 28px;cursor:pointer;border:none;
+  }
+  .btn-outline{
+    background:transparent;border:1.5px solid #C7CBD3;color:#B4B9C2;
+  }
+  .btn-outline:not(:disabled){border-color:var(--border);color:var(--text)}
+  .btn-outline:disabled{cursor:default}
+  .btn-primary{background:var(--primary);color:#fff}
+  .btn-primary:active{background:var(--primary-dark)}
+
+  /* ---------- Bottom sheet (grid) ---------- */
+  .overlay{
+    position:fixed;inset:0;background:rgba(10,10,30,.45);
+    opacity:0;pointer-events:none;transition:opacity .2s;z-index:10;
+  }
+  .overlay.open{opacity:1;pointer-events:auto}
+  .sheet{
+    position:fixed;left:50%;bottom:0;transform:translate(-50%,100%);
+    width:100%;max-width:480px;background:#fff;
+    border-radius:24px 24px 0 0;padding:12px 20px calc(24px + env(safe-area-inset-bottom));
+    transition:transform .28s ease;z-index:11;max-height:75dvh;overflow-y:auto;
+  }
+  .sheet.open{transform:translate(-50%,0)}
+  .grabber{width:44px;height:5px;border-radius:9px;background:#D9DCE2;margin:0 auto 16px}
+  .sheet h3{font-size:18px;font-weight:700;margin-bottom:6px}
+  .sheet p{font-size:13px;color:var(--muted);margin-bottom:16px}
+  .grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+  .grid button{
+    aspect-ratio:1;border-radius:12px;border:1.5px solid #D9DCE2;background:#fff;
+    font:600 15px 'Poppins',sans-serif;color:var(--text);cursor:pointer;
+  }
+  .grid button.answered{background:#ECE9FF;border-color:#C9C0FF;color:var(--primary)}
+  .grid button.current{border-color:var(--primary);background:var(--primary);color:#fff}
+
+  /* ---------- Modal ---------- */
+  .modal{
+    position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(.96);
+    width:calc(100% - 40px);max-width:400px;background:#fff;border-radius:22px;
+    padding:24px 22px 20px;z-index:12;opacity:0;pointer-events:none;transition:.2s;
+    text-align:center;
+  }
+  .modal.open{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+  .modal h3{font-size:19px;margin-bottom:8px}
+  .modal p{font-size:14px;color:#5B616E;margin-bottom:20px;line-height:1.5}
+  .modal .row{display:flex;gap:10px}
+  .modal .row .btn{flex:1;padding:13px 10px}
+
+  /* ---------- Results ---------- */
+  .result-head{text-align:center;padding:10px 0 24px}
+  .score-ring{
+    width:150px;height:150px;margin:6px auto 16px;border-radius:50%;
+    display:grid;place-items:center;
+  }
+  .score-ring > div{
+    width:122px;height:122px;border-radius:50%;background:var(--card);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+  }
+  .score-ring b{font-size:32px;line-height:1}
+  .score-ring span{font-size:13px;color:var(--muted);margin-top:4px}
+  .result-head h2{font-size:22px;margin-bottom:4px}
+  .result-head p{font-size:14px;color:#5B616E}
+  .stats{display:flex;gap:10px;margin-bottom:22px}
+  .stat{flex:1;background:#fff;border-radius:16px;padding:12px;text-align:center}
+  .stat b{display:block;font-size:20px}
+  .stat span{font-size:12px;color:var(--muted)}
+  .review-item{
+    background:#fff;border-radius:16px;padding:14px 16px;margin-bottom:12px;
+    border-left:4px solid var(--bad);
+  }
+  .review-item.ok{border-left-color:var(--ok)}
+  .review-item .n{font-size:12px;color:var(--muted);margin-bottom:4px}
+  .review-item .qq{font-weight:600;font-size:15px;margin-bottom:8px;line-height:1.4}
+  .review-item .a{font-size:13.5px;line-height:1.45;margin-top:3px}
+  .review-item .a.your{color:var(--bad)}
+  .review-item .a.right{color:var(--ok)}
+  .hidden{display:none !important}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Header -->
+  <header class="header" id="header">
+    <div class="top-row">
+      <button class="icon-btn" id="closeBtn" aria-label="Закрыть">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <button class="pill" id="gridBtn">
+        <span id="counter">1 / 40</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+      </button>
+      <div class="pill timer" id="timerPill">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9.5 2.5h5"/></svg>
+        <span id="timer">40:00</span>
+      </div>
+    </div>
+    <div class="progress"><div id="progressBar"></div></div>
+  </header>
+
+  <!-- Card -->
+  <main class="card">
+    <section class="content" id="content">
+      <div id="quizView">
+        <div class="q-label" id="qLabel">Вопрос 1 из 40</div>
+        <h1 class="q-text" id="qText"></h1>
+        <div class="options" id="options"></div>
+      </div>
+      <div id="resultView" class="hidden"></div>
+    </section>
+
+    <footer class="footer" id="footer">
+      <button class="btn btn-outline" id="prevBtn" disabled>Назад</button>
+      <button class="btn btn-primary" id="nextBtn">Далее</button>
+    </footer>
+  </main>
+</div>
+
+<!-- Grid sheet -->
+<div class="overlay" id="overlay"></div>
+<div class="sheet" id="sheet">
+  <div class="grabber"></div>
+  <h3>Все вопросы</h3>
+  <p id="sheetInfo">Отвечено 0 из 40</p>
+  <div class="grid" id="grid"></div>
+</div>
+
+<!-- Confirm modal -->
+<div class="modal" id="modal">
+  <h3 id="modalTitle">Завершить тест?</h3>
+  <p id="modalText">Ответы будут проверены, изменить их уже не получится.</p>
+  <div class="row">
+    <button class="btn btn-outline" id="modalCancel" style="color:var(--text);border-color:var(--border)">Отмена</button>
+    <button class="btn btn-primary" id="modalOk">Завершить</button>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   ВОПРОСЫ — меняй/добавляй здесь.
+   answer = индекс правильного варианта (0, 1, 2, 3)
+   ========================================================= */
+const QUESTIONS = [
+  { q:"What is the main purpose of branch prediction?",
+    options:["To predict the result or direction of a branch before it is fully resolved","To replace the instruction cache","To rename physical registers","To increase RAM capacity for programs"], answer:0 },
+  { q:"What does a pipeline hazard mean?",
+    options:["A situation that prevents the next instruction from executing in its cycle","A failure of the power supply","A type of cache memory","An error in the operating system"], answer:0 },
+  { q:"Which hazard occurs when an instruction depends on the result of a previous one?",
+    options:["Structural hazard","Data hazard","Control hazard","Memory hazard"], answer:1 },
+  { q:"What is the purpose of register renaming?",
+    options:["To give registers human-readable names","To eliminate false dependencies (WAR and WAW)","To increase clock frequency","To compress instructions"], answer:1 },
+  { q:"What does a cache hit mean?",
+    options:["The requested data was found in the cache","The cache is full","The data must be loaded from disk","The cache was flushed"], answer:0 },
+  { q:"Which cache level is usually the smallest and fastest?",
+    options:["L3","L2","L1","Main memory"], answer:2 },
+  { q:"What is the role of the Reorder Buffer (ROB)?",
+    options:["To sort data in memory","To commit out-of-order instructions in program order","To store the branch history","To buffer network packets"], answer:1 },
+  { q:"What is forwarding (bypassing) in a pipeline?",
+    options:["Passing a result directly to a dependent instruction before write-back","Skipping unused instructions","Sending data to another core","Writing data directly to disk"], answer:0 },
+  { q:"Which architecture uses the same memory for instructions and data?",
+    options:["Harvard","Von Neumann","Dataflow","VLIW"], answer:1 },
+  { q:"What does superscalar processor mean?",
+    options:["A processor with a very high clock rate","A processor that can issue several instructions per cycle","A processor with only one pipeline stage","A processor without cache"], answer:1 },
+  { q:"What is a TLB used for?",
+    options:["Caching virtual-to-physical address translations","Storing branch targets","Controlling the bus","Counting instructions"], answer:0 },
+  { q:"What does CPI stand for?",
+    options:["Cores Per Instance","Cycles Per Instruction","Cache Pointer Index","Control Program Interface"], answer:1 },
+  { q:"Which write policy updates main memory only when a cache line is evicted?",
+    options:["Write-through","Write-back","Write-around","Write-once"], answer:1 },
+  { q:"What is the main idea of out-of-order execution?",
+    options:["Executing instructions as soon as their operands are ready","Executing instructions in random order","Executing only every second instruction","Skipping branches"], answer:0 },
+  { q:"What is a branch target buffer (BTB)?",
+    options:["A cache storing predicted target addresses of branches","A buffer for disk writes","A register file","A part of the ALU"], answer:0 },
+  { q:"Which RISC feature is typical?",
+    options:["Variable-length complex instructions","Load/store architecture with simple instructions","Microcode for every instruction","Memory-to-memory operations only"], answer:1 },
+  { q:"What does Amdahl's law describe?",
+    options:["The limit of speedup from improving part of a system","The growth of transistor count","The power consumption of chips","The speed of the memory bus"], answer:0 },
+  { q:"What is a cache miss penalty?",
+    options:["Extra time needed to fetch data from a lower memory level","The cost of buying more cache","A wrong branch prediction","An exception in the program"], answer:0 },
+  { q:"What does SIMD mean?",
+    options:["Single Instruction, Multiple Data","Simple Instruction, Memory Direct","Single Input, Multiple Devices","Serial Instruction, Many Datapaths"], answer:0 },
+  { q:"What happens after a branch misprediction?",
+    options:["The pipeline is flushed and execution restarts from the correct path","The computer reboots","The cache is cleared","Nothing happens"], answer:0 },
+];
+
+const TOTAL_MINUTES = 40;          // время на тест
+const STORAGE_KEY = "quiz_state_v1";
+
+/* ========================================================= */
+const $ = id => document.getElementById(id);
+let state = {
+  current:0,
+  answers:Array(QUESTIONS.length).fill(null),
+  endsAt:Date.now() + TOTAL_MINUTES*60*1000,
+  finished:false
+};
+try{
+  const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+  if(saved && saved.answers && saved.answers.length === QUESTIONS.length) state = saved;
+}catch(e){}
+const save = () => { try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){} };
+
+const N = QUESTIONS.length;
+
+function render(){
+  if(state.finished){ renderResults(); return; }
+  const i = state.current, item = QUESTIONS[i];
+  $("counter").textContent = `${i+1} / ${N}`;
+  $("qLabel").textContent = `Вопрос ${i+1} из ${N}`;
+  $("qText").textContent = item.q;
+  $("progressBar").style.width = `${((i+1)/N)*100}%`;
+
+  const box = $("options"); box.innerHTML = "";
+  item.options.forEach((text, k) => {
+    const b = document.createElement("button");
+    b.className = "option" + (state.answers[i] === k ? " selected" : "");
+    b.innerHTML = `<span class="radio"></span><span></span>`;
+    b.lastChild.textContent = text;
+    b.onclick = () => { state.answers[i] = k; save(); render(); };
+    box.appendChild(b);
+  });
+
+  $("prevBtn").disabled = i === 0;
+  $("nextBtn").textContent = i === N-1 ? "Завершить" : "Далее";
+  $("content").scrollTop = 0;
+}
+
+function go(i){ state.current = Math.max(0, Math.min(N-1, i)); save(); render(); }
+
+$("prevBtn").onclick = () => { if(state.finished) return; go(state.current-1); };
+$("nextBtn").onclick = () => {
+  if(state.finished){ restart(); return; }
+  if(state.current < N-1) go(state.current+1);
+  else openModal();
+};
+
+/* ----- Timer ----- */
+function tick(){
+  if(state.finished) return;
+  let left = Math.max(0, state.endsAt - Date.now());
+  const m = Math.floor(left/60000), s = Math.floor(left%60000/1000);
+  $("timer").textContent = `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+  $("timerPill").classList.toggle("warn", left < 60000);
+  if(left <= 0) finish();
+}
+setInterval(tick, 500); tick();
+
+/* ----- Grid sheet ----- */
+function openSheet(){
+  if(state.finished) return;
+  const g = $("grid"); g.innerHTML = "";
+  QUESTIONS.forEach((_, k) => {
+    const b = document.createElement("button");
+    b.textContent = k+1;
+    if(state.answers[k] !== null) b.classList.add("answered");
+    if(k === state.current) b.classList.add("current");
+    b.onclick = () => { closeAll(); go(k); };
+    g.appendChild(b);
+  });
+  $("sheetInfo").textContent = `Отвечено ${state.answers.filter(a=>a!==null).length} из ${N}`;
+  $("overlay").classList.add("open"); $("sheet").classList.add("open");
+}
+function closeAll(){
+  ["overlay","sheet","modal"].forEach(id => $(id).classList.remove("open"));
+}
+$("gridBtn").onclick = openSheet;
+$("overlay").onclick = closeAll;
+
+/* ----- Modal ----- */
+function openModal(){
+  const left = state.answers.filter(a=>a===null).length;
+  $("modalText").textContent = left
+    ? `Без ответа осталось вопросов: ${left}. Всё равно завершить?`
+    : "Ответы будут проверены, изменить их уже не получится.";
+  $("overlay").classList.add("open"); $("modal").classList.add("open");
+}
+$("closeBtn").onclick = () => state.finished ? restart() : openModal();
+$("modalCancel").onclick = closeAll;
+$("modalOk").onclick = () => { closeAll(); finish(); };
+
+/* ----- Finish & results ----- */
+function finish(){ state.finished = true; save(); render(); }
+
+function renderResults(){
+  $("quizView").classList.add("hidden");
+  const rv = $("resultView"); rv.classList.remove("hidden");
+  const correct = QUESTIONS.filter((q,i)=>state.answers[i]===q.answer).length;
+  const skipped = state.answers.filter(a=>a===null).length;
+  const pct = Math.round(correct/N*100);
+
+  $("counter").textContent = `${N} / ${N}`;
+  $("progressBar").style.width = "100%";
+  $("timer").textContent = "00:00";
+  $("prevBtn").classList.add("hidden");
+  $("footer").style.justifyContent = "center";
+  $("nextBtn").textContent = "Пройти заново";
+  $("nextBtn").style.width = "100%";
+
+  const color = pct >= 70 ? "var(--ok)" : pct >= 40 ? "#F5A524" : "var(--bad)";
+  let html = `
+    <div class="result-head">
+      <div class="score-ring" style="background:conic-gradient(${color} ${pct*3.6}deg,#E3E6EC 0)">
+        <div><b>${pct}%</b><span>результат</span></div>
+      </div>
+      <h2>${pct>=70?"Отлично!":pct>=40?"Неплохо":"Нужно повторить"}</h2>
+      <p>Правильных ответов: ${correct} из ${N}</p>
+    </div>
+    <div class="stats">
+      <div class="stat"><b style="color:var(--ok)">${correct}</b><span>верно</span></div>
+      <div class="stat"><b style="color:var(--bad)">${N-correct-skipped}</b><span>ошибки</span></div>
+      <div class="stat"><b>${skipped}</b><span>пропущено</span></div>
+    </div>`;
+  QUESTIONS.forEach((q,i)=>{
+    const a = state.answers[i], ok = a === q.answer;
+    html += `<div class="review-item ${ok?"ok":""}">
+      <div class="n">Вопрос ${i+1}</div>
+      <div class="qq"></div>
+      ${ok ? "" : `<div class="a your"></div>`}
+      <div class="a right"></div>
+    </div>`;
+  });
+  rv.innerHTML = html;
+  // безопасная вставка текста
+  rv.querySelectorAll(".review-item").forEach((el,i)=>{
+    const q = QUESTIONS[i], a = state.answers[i];
+    el.querySelector(".qq").textContent = q.q;
+    const your = el.querySelector(".your");
+    if(your) your.textContent = "✗ Ваш ответ: " + (a===null ? "нет ответа" : q.options[a]);
+    el.querySelector(".right").textContent = "✓ " + q.options[q.answer];
+  });
+  $("content").scrollTop = 0;
+}
+
+function restart(){
+  try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
+  location.reload();
+}
+
+render();
+</script>
+</body>
+</html>
