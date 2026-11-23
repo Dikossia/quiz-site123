@@ -118,6 +118,7 @@
   .fbtn-primary:active{background:var(--primary-dark)}
   .fbtn-primary:disabled{background:#C9C3F2;cursor:default}
   .fbtn-submit{flex:1.1;border:none;background:var(--ok);color:#fff;font-size:14px}
+  .fbtn svg{flex-shrink:0}
   .footer.last{gap:7px}
   .footer.last .fbtn{flex:1 1 0;min-width:0;padding:0 8px;font-size:13px;gap:4px}
   .footer.last .fbtn-submit{flex:1.5 1 0}
@@ -474,19 +475,6 @@ function renderResults(){
   $("content").scrollTop = 0;
 }
 function restart(){ try{ localStorage.removeItem(STORAGE_KEY); }catch(e){} location.reload(); }
-
-/* iOS «экран Домой»: прижать футер к низу */
-function fixBottomGap(){
-  const standalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
-  if(!standalone) return;
-  const portrait = window.innerHeight > window.innerWidth;
-  const screenH = portrait ? Math.max(screen.width, screen.height) : Math.min(screen.width, screen.height);
-  const gap = Math.max(0, Math.round(screenH - window.innerHeight));
-  $("footer").style.bottom = gap > 0 && gap < 120 ? (-gap) + "px" : "0px";
-}
-fixBottomGap();
-window.addEventListener("resize", fixBottomGap);
-window.addEventListener("orientationchange", () => setTimeout(fixBottomGap, 300));
 
 render();
 </script>
