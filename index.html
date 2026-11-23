@@ -15,8 +15,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --primary:#1d1991;
-    --primary-dark:#1d1991;
+    --primary:#2f1991;
+    --primary-dark:#2f1991;
     --card:#F3F5F8;
     --text:#14161C;
     --muted:#9AA0AB;
@@ -309,6 +309,7 @@ const QUESTIONS = [
     options:["Sweden has no electricity costs","The cold climate allows free cooling with outside air, and cheap renewable hydroelectric power is available","To be closer to its users in the United States","Sea water can be pumped directly through the servers and naturally cool them without paying for additional tools"], answer:1 },
   { q:"SIMD is more energy efficient than MIMD because it fetches only one instruction for many data operations.", options:TF, answer:0 },
   { q:"Adding more cores always increases performance without any increase in power consumption.", options:TF, answer:1 },
+  { q:"Water is used to cool WSCs because it can carry away much more heat than the same volume of air.", options:TF, answer:0 },
   { q:"Bypassing, speculation and out-of-order execution together eliminate all delays caused by dependent instructions.", options:TF, answer:1 },
   { q:"In the MSI protocol, a block that is in the Modified state in one cache cannot be in the Shared state in another cache at the same time.", options:TF, answer:0 },
   { q:"What is a vector register?",
@@ -346,7 +347,7 @@ const QUESTIONS = [
 ];
 
 const TOTAL_MINUTES = 40;          // время на тест
-const STORAGE_KEY = "quiz_state_v2";
+const STORAGE_KEY = "quiz_state_v3";
 
 /* ========================================================= */
 const $ = id => document.getElementById(id);
