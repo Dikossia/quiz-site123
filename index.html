@@ -15,8 +15,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --primary:#251991;
-    --primary-dark:#251991;
+    --primary:#1d1991;
+    --primary-dark:#1d1991;
     --card:#F3F5F8;
     --text:#14161C;
     --muted:#9AA0AB;
@@ -117,6 +117,13 @@
     content:"";position:absolute;inset:4px;border-radius:50%;background:var(--primary);
   }
   .option:active{transform:scale(.995)}
+
+  .fill-input{
+    width:100%;border:1.5px solid var(--border);border-radius:16px;
+    padding:18px;font:400 16px 'Poppins',sans-serif;color:var(--text);
+    background:transparent;outline:none;
+  }
+  .fill-input:focus{border-color:var(--primary);background:#ECE9FF}
 
   /* ---------- Footer ---------- */
   .footer{
@@ -272,51 +279,74 @@
    ВОПРОСЫ — меняй/добавляй здесь.
    answer = индекс правильного варианта (0, 1, 2, 3)
    ========================================================= */
+const TF = ["True","False"];
 const QUESTIONS = [
-  { q:"What is the main purpose of branch prediction?",
-    options:["To predict the result or direction of a branch before it is fully resolved","To replace the instruction cache","To rename physical registers","To increase RAM capacity for programs"], answer:0 },
-  { q:"What does a pipeline hazard mean?",
-    options:["A situation that prevents the next instruction from executing in its cycle","A failure of the power supply","A type of cache memory","An error in the operating system"], answer:0 },
-  { q:"Which hazard occurs when an instruction depends on the result of a previous one?",
-    options:["Structural hazard","Data hazard","Control hazard","Memory hazard"], answer:1 },
-  { q:"What is the purpose of register renaming?",
-    options:["To give registers human-readable names","To eliminate false dependencies (WAR and WAW)","To increase clock frequency","To compress instructions"], answer:1 },
-  { q:"What does a cache hit mean?",
-    options:["The requested data was found in the cache","The cache is full","The data must be loaded from disk","The cache was flushed"], answer:0 },
-  { q:"Which cache level is usually the smallest and fastest?",
-    options:["L3","L2","L1","Main memory"], answer:2 },
-  { q:"What is the role of the Reorder Buffer (ROB)?",
-    options:["To sort data in memory","To commit out-of-order instructions in program order","To store the branch history","To buffer network packets"], answer:1 },
-  { q:"What is forwarding (bypassing) in a pipeline?",
-    options:["Passing a result directly to a dependent instruction before write-back","Skipping unused instructions","Sending data to another core","Writing data directly to disk"], answer:0 },
-  { q:"Which architecture uses the same memory for instructions and data?",
-    options:["Harvard","Von Neumann","Dataflow","VLIW"], answer:1 },
-  { q:"What does superscalar processor mean?",
-    options:["A processor with a very high clock rate","A processor that can issue several instructions per cycle","A processor with only one pipeline stage","A processor without cache"], answer:1 },
-  { q:"What is a TLB used for?",
-    options:["Caching virtual-to-physical address translations","Storing branch targets","Controlling the bus","Counting instructions"], answer:0 },
-  { q:"What does CPI stand for?",
-    options:["Cores Per Instance","Cycles Per Instruction","Cache Pointer Index","Control Program Interface"], answer:1 },
-  { q:"Which write policy updates main memory only when a cache line is evicted?",
-    options:["Write-through","Write-back","Write-around","Write-once"], answer:1 },
-  { q:"What is the main idea of out-of-order execution?",
-    options:["Executing instructions as soon as their operands are ready","Executing instructions in random order","Executing only every second instruction","Skipping branches"], answer:0 },
-  { q:"What is a branch target buffer (BTB)?",
-    options:["A cache storing predicted target addresses of branches","A buffer for disk writes","A register file","A part of the ALU"], answer:0 },
-  { q:"Which RISC feature is typical?",
-    options:["Variable-length complex instructions","Load/store architecture with simple instructions","Microcode for every instruction","Memory-to-memory operations only"], answer:1 },
-  { q:"What does Amdahl's law describe?",
-    options:["The limit of speedup from improving part of a system","The growth of transistor count","The power consumption of chips","The speed of the memory bus"], answer:0 },
-  { q:"What is a cache miss penalty?",
-    options:["Extra time needed to fetch data from a lower memory level","The cost of buying more cache","A wrong branch prediction","An exception in the program"], answer:0 },
-  { q:"What does SIMD mean?",
-    options:["Single Instruction, Multiple Data","Simple Instruction, Memory Direct","Single Input, Multiple Devices","Serial Instruction, Many Datapaths"], answer:0 },
-  { q:"What happens after a branch misprediction?",
-    options:["The pipeline is flushed and execution restarts from the correct path","The computer reboots","The cache is cleared","Nothing happens"], answer:0 },
+  { q:"A building that houses an organization's servers, storage and networking equipment is called a ____.", hint:"2 слова", accept:["data center","data centre","datacenter"] },
+  { q:"In distributed shared memory (DSM), multicore nodes, each with its own memory and I/O, are connected by an ____.", hint:"2 слова", accept:["interconnection network","interconnect network"] },
+  { q:"In BigTable, column keys are grouped into sets called ____.", hint:"2 слова", accept:["column families","column family"] },
+  { q:"In a directory-based protocol, the node where a memory block and its directory entry reside is called the ____.", hint:"2 слова", accept:["home node"] },
+  { q:"Which statement best describes the difference between CPUs and GPUs?",
+    options:["A CPU has thousands of simple cores built for throughput and optimized for fast serial work; a GPU has a few complex cores built for low latency","GPUs cannot perform floating-point arithmetic","A CPU has a few powerful cores optimized for fast serial work; a GPU has thousands of simpler cores optimized for massively parallel work","CPUs and GPUs have identical designs and differ only in price"], answer:2 },
+  { q:"How are a program, a process and a thread related?",
+    options:["A thread contains several processes, and a process contains several programs","A program is stored on disk; when it is instantiated in RAM it becomes a process, and a process contains one or more threads","A process is stored on disk and becomes a program when it is loaded into RAM","Program, process and thread are three names for the same thing"], answer:1 },
+  { q:"Which part of the operating system selects which thread runs next on the CPU?",
+    options:["The scheduler","The compiler","The linker","The cache controller"], answer:0 },
+  { q:"In Flynn's taxonomy, multiprocessors and multicomputers belong to which class?",
+    options:["SISD","SIMD","MIMD","MISD"], answer:2 },
+  { q:"In the MSI snooping protocol, what are the three possible states of a cache block?",
+    options:["Master, Slave, Idle","Modified, Shared, Invalid","Mapped, Stored, Indexed","Main, Secondary, Indirect"], answer:1 },
+  { q:"In a directory-based cache coherence protocol, where is the sharing status of a block of physical memory kept?",
+    options:["In every cache that holds a copy of the block","In the processor's registers","In just one location, the directory","On the disk"], answer:2 },
+  { q:"Which statement best describes cloud computing?",
+    options:["On-demand access to computing resources over the Internet, paid for as they are used","Buying servers and keeping them in your own office","A level of the CPU cache hierarchy where many servers run the project tasks according to number of active users","A method of cooling data centers"], answer:0 },
+  { q:"In data centers, what does CRAC stand for?",
+    options:["Central Rack Access Controller","Cooling Rack Air Channel","Cache Read After Clear","Computer Room Air Conditioning unit"], answer:3 },
+  { q:"In the Google File System (GFS), which servers store the actual file data?",
+    options:["The GFS master","Chunkservers","Routers","Main Server"], answer:1 },
+  { q:"Compared with Dynamo's get/put API, what does BigTable's API offer?",
+    options:["Only get","get, put, scan and delete","SQL SELECT statements only","push and pull"], answer:1 },
+  { q:"Why did Facebook build a data center in Luleå, Sweden?",
+    options:["Sweden has no electricity costs","The cold climate allows free cooling with outside air, and cheap renewable hydroelectric power is available","To be closer to its users in the United States","Sea water can be pumped directly through the servers and naturally cool them without paying for additional tools"], answer:1 },
+  { q:"SIMD is more energy efficient than MIMD because it fetches only one instruction for many data operations.", options:TF, answer:0 },
+  { q:"Adding more cores always increases performance without any increase in power consumption.", options:TF, answer:1 },
+  { q:"Bypassing, speculation and out-of-order execution together eliminate all delays caused by dependent instructions.", options:TF, answer:1 },
+  { q:"In the MSI protocol, a block that is in the Modified state in one cache cannot be in the Shared state in another cache at the same time.", options:TF, answer:0 },
+  { q:"What is a vector register?",
+    options:["A register that stores only memory addresses","A register that stores multiple data elements","A register that controls the operating system","A register used only for instruction decoding"], answer:1 },
+  { q:"What is vector stride?",
+    options:["The distance between consecutive elements accessed in memory","The number of instructions executed per second","The total size of a vector register at the same time it's called VLR","The number of processors in a system"], answer:0 },
+  { q:"What does AVX stand for?",
+    options:["Advanced Vector Extensions","Automatic Virtual Execution","Advanced Variable Exchange","Accelerated Virtual Extensions"], answer:0 },
+  { q:"Which type of processor is particularly suitable for graphics processing and highly parallel computations?",
+    options:["GPU","Keyboard controller","Hard disk controller","Printer processor"], answer:0 },
+  { q:"What does SIMT stand for in GPU architecture?",
+    options:["Single Instruction, Multiple Threads","Sequential Instruction, Multiple Tasks","Shared Instruction, Memory Transfer","Single Input, Multiple Transactions"], answer:0 },
+  { q:"Vector registers can store multiple data elements.", options:TF, answer:0 },
+  { q:"Vector processing is useful for matrix-oriented scientific computing.", options:TF, answer:0 },
+  { q:"GPUs are designed primarily for sequential execution of a small number of instructions.", options:TF, answer:1 },
+  { q:"What is a thread in an operating system?",
+    options:["A physical CPU component","An independent portion of a program that can run in parallel","A type of storage device","A computer network"], answer:1 },
+  { q:"Which memory space do threads belonging to the same process share?",
+    options:["Separate physical memory","Shared virtual memory space","Separate disk space","CPU cache only"], answer:1 },
+  { q:"What is the main purpose of thread-level parallelism?",
+    options:["To execute multiple threads concurrently","To increase disk capacity","To reduce the number of instructions in a program","To eliminate operating systems"], answer:0 },
+  { q:"Which component selects threads for CPU execution?",
+    options:["Compiler","Scheduler","Hard disk","Cache controller"], answer:1 },
+  { q:"What is one important difference between processes and threads?",
+    options:["Processes share one virtual memory space, while threads do not","Each process has its own virtual memory space, while threads of the same process share memory","Processes cannot execute instructions, while threads contains many processes to execute program","Threads always require separate computers"], answer:1 },
+  { q:"Why can instructions from different threads be interleaved in a pipeline?",
+    options:["To guarantee that all instructions use the same data with no dependencies between them","To reduce dependencies between consecutive instructions from different threads","To remove the need for a CPU scheduler","To prevent memory access"], answer:1 },
+  { q:"In a snooping-based coherence protocol, what does each cache with a copy of data also maintain?",
+    options:["A copy of the sharing status of the block","A complete copy of the operating system","A separate CPU scheduler","A copy of every processor's registers"], answer:0 },
+  { q:"Threads belonging to the same process share the same virtual memory space.", options:TF, answer:0 },
+  { q:"In a snooping protocol, a centralized directory stores all sharing information.", options:TF, answer:1 },
+  { q:"The operating system component responsible for selecting threads for execution is the ____.", hint:"1 слово", accept:["scheduler"] },
+  { q:"In a directory-based protocol, sharing information is maintained in a ____.", hint:"1 слово", accept:["directory"] },
+  { q:"A multiprocessor architecture in which memory is distributed among processors but presented as shared memory is called ____.", hint:"3 слова", accept:["distributed shared memory","dsm"] },
 ];
 
 const TOTAL_MINUTES = 40;          // время на тест
-const STORAGE_KEY = "quiz_state_v1";
+const STORAGE_KEY = "quiz_state_v2";
 
 /* ========================================================= */
 const $ = id => document.getElementById(id);
@@ -333,6 +363,11 @@ try{
 const save = () => { try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){} };
 
 const N = QUESTIONS.length;
+const norm = x => String(x||"").toLowerCase().replace(/[-_.,]/g," ").replace(/\s+/g," ").trim();
+const isFill = q => !!q.accept;
+const isRight = (q,a) => isFill(q) ? q.accept.some(x=>norm(x)===norm(a)) : a===q.answer;
+const rightText = q => isFill(q) ? q.accept[0] : q.options[q.answer];
+const yourText = (q,a) => a===null ? "нет ответа" : (isFill(q) ? a : q.options[a]);
 
 function render(){
   if(state.finished){ renderResults(); return; }
@@ -343,6 +378,14 @@ function render(){
   $("progressBar").style.width = `${((i+1)/N)*100}%`;
 
   const box = $("options"); box.innerHTML = "";
+  if(isFill(item)){
+    const inp = document.createElement("input");
+    inp.className = "fill-input"; inp.placeholder = item.hint || "Ответ";
+    inp.autocomplete = "off"; inp.autocapitalize = "off"; inp.spellcheck = false;
+    inp.value = state.answers[i] || "";
+    inp.oninput = () => { state.answers[i] = inp.value.trim() ? inp.value : null; save(); };
+    box.appendChild(inp);
+  } else
   item.options.forEach((text, k) => {
     const b = document.createElement("button");
     b.className = "option" + (state.answers[i] === k ? " selected" : "");
@@ -416,7 +459,7 @@ function finish(){ state.finished = true; save(); render(); }
 function renderResults(){
   $("quizView").classList.add("hidden");
   const rv = $("resultView"); rv.classList.remove("hidden");
-  const correct = QUESTIONS.filter((q,i)=>state.answers[i]===q.answer).length;
+  const correct = QUESTIONS.filter((q,i)=>isRight(q,state.answers[i])).length;
   const skipped = state.answers.filter(a=>a===null).length;
   const pct = Math.round(correct/N*100);
 
@@ -443,7 +486,7 @@ function renderResults(){
       <div class="stat"><b>${skipped}</b><span>пропущено</span></div>
     </div>`;
   QUESTIONS.forEach((q,i)=>{
-    const a = state.answers[i], ok = a === q.answer;
+    const a = state.answers[i], ok = isRight(q,a);
     html += `<div class="review-item ${ok?"ok":""}">
       <div class="n">Вопрос ${i+1}</div>
       <div class="qq"></div>
@@ -457,8 +500,8 @@ function renderResults(){
     const q = QUESTIONS[i], a = state.answers[i];
     el.querySelector(".qq").textContent = q.q;
     const your = el.querySelector(".your");
-    if(your) your.textContent = "✗ Ваш ответ: " + (a===null ? "нет ответа" : q.options[a]);
-    el.querySelector(".right").textContent = "✓ " + q.options[q.answer];
+    if(your) your.textContent = "✗ Ваш ответ: " + yourText(q,a);
+    el.querySelector(".right").textContent = "✓ " + rightText(q);
   });
   $("content").scrollTop = 0;
 }
